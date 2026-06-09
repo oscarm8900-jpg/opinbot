@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import NewSurveyModal, { type Survey } from "@/components/NewSurveyModal";
+import { useAuth } from '../../contexts/AuthContext';
+import NewSurveyModal from '../../components/NewSurveyModal';
 import ResponsesModal from "@/components/ResponsesModal";
 
 function CopyLinkButton({ surveyId }: { surveyId: string }) {
