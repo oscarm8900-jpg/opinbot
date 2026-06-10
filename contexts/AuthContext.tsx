@@ -29,18 +29,19 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-  supabaseUrl: string;
-  supabaseAnonKey: string;
-}
-
-export function AuthProvider({ children, supabaseUrl, supabaseAnonKey }: AuthProviderProps) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Leer variables de entorno directamente
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
   const supabase = useMemo(() => {
-    if (!supabaseUrl || !supabaseAnonKey) return null;
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error("Faltan variables de entorno de Supabase");
+      return null;
+    }
     return createBrowserClient(supabaseUrl, supabaseAnonKey);
   }, [supabaseUrl, supabaseAnonKey]);
 
