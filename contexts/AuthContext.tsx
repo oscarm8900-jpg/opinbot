@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // URL y clave correctas de Supabase
   const supabaseUrl = "https://uhtxehomsdjcnndrpvgc.supabase.co";
   const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodHhlaG9tc2RqY25uZHJwdmdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDQyMzIsImV4cCI6MjA5NDEyMDIzMn0.Ppx5oKP1jKIIbMiZ-DD3c4EzTi_RolxBbN02zQYndtQ";
 
