@@ -12,10 +12,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Leer las variables de entorno del servidor
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Si no están configuradas, lanza un error claro
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      "Faltan las variables de entorno NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    );
+  }
+
   return (
     <html lang="es">
       <body>
-        <AuthProvider>
+        <AuthProvider supabaseUrl={supabaseUrl} supabaseAnonKey={supabaseAnonKey}>
           {children}
         </AuthProvider>
       </body>

@@ -3,10 +3,16 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../../contexts/AuthContext";
 import NewSurveyModal from '../../components/NewSurveyModal';
-import ResponsesModal from "@/components/ResponsesModal";
-
+import ResponsesModal from '../../components/ResponsesModal';
+interface Survey {
+  id: string;
+  title: string;
+  status: string;
+  created_at: string;
+  questions?: any[]; // El '?'
+}
 function CopyLinkButton({ surveyId }: { surveyId: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
