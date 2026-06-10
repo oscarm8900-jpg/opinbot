@@ -34,8 +34,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Leer variables de entorno directamente
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://uhtxehomsdjcnndrpycg.supabase.co"
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodHhlaG9tc2RqY25uZHJweWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDQyMzIsImV4cCI6MjA5NDEyMDIzMn0.Ppx5oKP1jKIIbMiZ-DD3c4EzTi_RolxBbN02zQYndtQ";
 
   const supabase = useMemo(() => {
     if (!supabaseUrl || !supabaseAnonKey) {
