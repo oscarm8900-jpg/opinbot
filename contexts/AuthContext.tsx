@@ -5,7 +5,6 @@ import {
   useContext,
   useEffect,
   useState,
-  useCallback,
   useMemo,
 } from "react";
 import { createBrowserClient } from "@supabase/ssr";
@@ -20,37 +19,21 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  supabase: null,
-  signIn: async () => ({ error: null }),
-  signUp: async () => ({ error: null }),
-  signOut: async () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Leer variables de entorno directamente
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://uhtxehomsdjcnndrpycg.supabase.co"
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodHhlaG9tc2RqY25uZHJweWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDQyMzIsImV4cCI6MjA5NDEyMDIzMn0.Ppx5oKP1jKIIbMiZ-DD3c4EzTi_RolxBbN02zQYndtQ";
+  // URL y clave correctas de Supabase
+  const supabaseUrl = "https://uhtxehomsdjcnndrpvgc.supabase.co";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodHhlaG9tc2RqY25uZHJwdmdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDQyMzIsImV4cCI6MjA5NDEyMDIzMn0.Ppx5oKP1jKIIbMiZ-DD3c4EzTi_RolxBbN02zQYndtQ";
 
   const supabase = useMemo(() => {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error("Faltan variables de entorno de Supabase");
-      return null;
-    }
     return createBrowserClient(supabaseUrl, supabaseAnonKey);
   }, [supabaseUrl, supabaseAnonKey]);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user ?? null);
       setLoading(false);
@@ -64,25 +47,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    if (!supabase) return { error: "Cliente no inicializado" };
+  const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error ? error.message : null };
-  }, [supabase]);
+  };
 
-  const signUp = useCallback(async (email: string, password: string, name?: string) => {
-    if (!supabase) return { error: "Cliente no inicializado" };
+  const signUp = async (email: string, password: string, name?: string) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } },
     });
     return { error: error ? error.message : null };
-  }, [supabase]);
+  };
 
-  const signOut = useCallback(async () => {
-    await supabase?.auth.signOut();
-  }, [supabase]);
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, supabase, signIn, signUp, signOut }}>
@@ -91,4 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
